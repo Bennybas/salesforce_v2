@@ -3,6 +3,7 @@ import 'package:sales_force_app/common_widget/round_button.dart';
 import 'package:sales_force_app/common_widget/workout_row.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:sales_force_app/view/home/blank_view.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 import '../../common/colo_extension.dart';
@@ -142,21 +143,7 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       ],
                     ),
-                    IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const NotificationView(),
-                            ),
-                          );
-                        },
-                        icon: Image.asset(
-                          "assets/img/notification_active.png",
-                          width: 25,
-                          height: 25,
-                          fit: BoxFit.fitHeight,
-                        ))
+
                   ],
                 ),
                 SizedBox(
@@ -418,7 +405,7 @@ class _HomeViewState extends State<HomeView> {
                               width: media.width * 0.07,
                               backgroundColor: Colors.grey.shade100,
                               foregrondColor: Colors.purple,
-                              ratio: 0.5,
+                              ratio: 0.6,
                               direction: Axis.vertical,
                               curve: Curves.fastLinearToSlowEaseIn,
                               duration: const Duration(seconds: 3),

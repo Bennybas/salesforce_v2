@@ -1,13 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:sales_force_app/common/colo_extension.dart';
 import 'package:sales_force_app/common_widget/tab_button.dart';
-import 'package:sales_force_app/view/home/blank_view.dart';
 import 'package:sales_force_app/view/main_tab/select_view.dart';
-import 'package:flutter/material.dart';
-
-import '../home/home_view.dart';
-import '../photo_progress/photo_progress_view.dart';
-import '../profile/profile_view.dart';
-import '../workout_tracker/workout_tracker_view.dart';
+import 'package:sales_force_app/view/home/home_view.dart';
+import 'package:sales_force_app/view/photo_progress/photo_progress_view.dart';
+import 'package:sales_force_app/view/profile/profile_view.dart';
 
 class MainTabView extends StatefulWidget {
   const MainTabView({super.key});
@@ -16,96 +13,166 @@ class MainTabView extends StatefulWidget {
   State<MainTabView> createState() => _MainTabViewState();
 }
 
-class _MainTabViewState extends State<MainTabView> {
+class _MainTabViewState extends State<MainTabView> with SingleTickerProviderStateMixin {
   int selectTab = 0;
-  final PageStorageBucket pageBucket = PageStorageBucket(); 
+  final PageStorageBucket pageBucket = PageStorageBucket();
   Widget currentTab = const HomeView();
+  late AnimationController _fabAnimationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _fabAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+  }
+
+  @override
+  void dispose() {
+    _fabAnimationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: TColor.white,
-      body: PageStorage(bucket: pageBucket, child: currentTab),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: SizedBox(
-        width: 70,
-        height: 70,
-        child: InkWell(
-          onTap: () {},
-          child: Container(
-            width: 65,
-            height: 65,
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: TColor.primaryG,
-                ),
-                borderRadius: BorderRadius.circular(35),
-                boxShadow: const [
-                  BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 2,)
-                ]),
-            child: Icon(Icons.mic,color: TColor.white, size: 35, ),
+      body: SafeArea(
+        child: SizedBox(
+          width: screenWidth,
+          height: screenHeight,
+          child: PageStorage(
+            bucket: pageBucket,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: currentTab,
+            ),
           ),
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-          child: Container(
-        decoration: BoxDecoration(color: TColor.white, boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 2, offset: Offset(0, -2))
-        ]),
-        height: kToolbarHeight,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            TabButton(
-                icon: "assets/img/pre_call_tab.png",
-                selectIcon: "assets/img/pre_call_select.png",
-                isActive: selectTab == 0,
-                onTap: () {
-                  selectTab = 0;
-                  currentTab = const HomeView();
-                  if (mounted) {
-                    setState(() {});
-                  }
-                }),
-            TabButton(
-                icon: "assets/img/phone.png",
-                selectIcon: "assets/img/phone_select.png",
-                isActive: selectTab == 1,
-                onTap: () {
-                  selectTab = 1;
-                  currentTab = const ProfileView();
-                  if (mounted) {
-                    setState(() {});
-                  }
-                }),
-
-              const  SizedBox(width: 40,),
-            TabButton(
-                icon: "assets/img/post_call_tab.png",
-                selectIcon: "assets/img/post_call_select.png",
-                isActive: selectTab == 2,
-                onTap: () {
-                  selectTab = 2;
-                   currentTab = const PhotoProgressView();
-                  if (mounted) {
-                    setState(() {});
-                  }
-                }),
-            TabButton(
-                icon: "assets/img/coaching_tab.png",
-                selectIcon: "assets/img/coaching_select.png",
-                isActive: selectTab == 3,
-                onTap: () {
-                  selectTab = 3;
-                   currentTab = const SelectView();
-                  if (mounted) {
-                    setState(() {});
-                  }
-                })
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: ScaleTransition(
+        scale: Tween<double>(begin: 0.8, end: 1.0).animate(
+          CurvedAnimation(
+            parent: _fabAnimationController,
+            curve: Curves.easeInOut,
+          ),
+        ),
+        child: SizedBox(
+          width: 75,
+          height: 75,
+          child: InkWell(
+            onTap: () {
+              _fabAnimationController.forward(from: 0);
+              // Add your mic button functionality here
+            },
+            child: Container(
+              width: 70,
+              height: 70,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: TColor.primaryG,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(35),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Icon(
+                Icons.mic,
+                color: TColor.white,
+                size: 35,
+              ),
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: TColor.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -5),
+            ),
           ],
         ),
-      )),
+        child: BottomAppBar(
+          elevation: 0,
+          color: Colors.transparent,
+          child: SizedBox(
+            height: 80,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildTabButton(
+                    icon: "assets/img/pre_call_tab.png",
+                    selectIcon: "assets/img/pre_call_select.png",
+                    index: 0,
+                    view: const HomeView(),
+                  ),
+                  const SizedBox(width: 5,),
+                  _buildTabButton(
+                    icon: "assets/img/phone.png",
+                    selectIcon: "assets/img/phone_select.png",
+                    index: 1,
+                    view: const ProfileView(),
+                  ),
+                  const SizedBox(width: 5,),
+                  const SizedBox(width: 60),
+                  _buildTabButton(
+                    icon: "assets/img/post_call_tab.png",
+                    selectIcon: "assets/img/post_call_select.png",
+                    index: 2,
+                    view: const PhotoProgressView(),
+                  ),
+                  const SizedBox(width: 5,),
+                  _buildTabButton(
+                    icon: "assets/img/coaching_tab.png",
+                    selectIcon: "assets/img/coaching_select.png",
+                    index: 3,
+                    view: const SelectView(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabButton({
+    required String icon,
+    required String selectIcon,
+    required int index,
+    required Widget view,
+  }) {
+    return Expanded(
+      child: TabButton(
+        icon: icon,
+        selectIcon: selectIcon,
+        isActive: selectTab == index,
+        onTap: () {
+          setState(() {
+            selectTab = index;
+            currentTab = view;
+          });
+        },
+      ),
     );
   }
 }

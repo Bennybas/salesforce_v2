@@ -26,6 +26,7 @@ dependencies:
     path: dev_lib/calendar_agenda/
   intl: ^0.18.1
   syncfusion_flutter_charts: ^28.1.41
+  convex_bottom_bar: ^3.2.0
 
 dependency_overrides:
   intl: ^0.18.1
